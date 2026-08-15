@@ -1,0 +1,4 @@
+* text=auto eol=lf
+
+# The guest images are compiled artefacts. Git must not touch a byte of them.
+fixtures/*.elf binary

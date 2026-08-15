@@ -1,0 +1,16 @@
+[workspace]
+resolver = "2"
+members = ["crates/hartbeat", "crates/hartbeat-ref"]
+
+# The guest programs are built for riscv32im-unknown-none-elf, not for the host,
+# so they are a separate build entirely. `tools/build-guests.sh` builds them.
+exclude = ["guests"]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+rust-version = "1.74"
+license = "MIT"
+
+[profile.release]
+opt-level = 3

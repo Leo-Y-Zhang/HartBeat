@@ -1,0 +1,34 @@
+[package]
+name = "hartbeat-guests"
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+publish = false
+
+# Freestanding RV32IM programs. Built by tools/build-guests.sh for the
+# riscv32im-unknown-none-elf target; not part of the host workspace.
+
+[[bin]]
+name = "arith"
+path = "src/bin/arith.rs"
+
+[[bin]]
+name = "muldiv"
+path = "src/bin/muldiv.rs"
+
+[[bin]]
+name = "memops"
+path = "src/bin/memops.rs"
+
+[[bin]]
+name = "sort"
+path = "src/bin/sort.rs"
+
+[[bin]]
+name = "control"
+path = "src/bin/control.rs"
+
+[profile.release]
+opt-level = "s"
+panic = "abort"
+lto = true

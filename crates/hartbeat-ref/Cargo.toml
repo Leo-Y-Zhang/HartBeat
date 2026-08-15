@@ -1,0 +1,9 @@
+[package]
+name = "hartbeat-ref"
+description = "A second RV32IM interpreter, written differently on purpose"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[dependencies]

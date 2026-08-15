@@ -1,0 +1,16 @@
+[package]
+name = "hartbeat"
+description = "An RV32IM interpreter, verified in lockstep against an independent implementation"
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+license.workspace = true
+
+[dependencies]
+
+[dev-dependencies]
+hartbeat-ref = { path = "../hartbeat-ref" }
+
+[[bin]]
+name = "hartbeat"
+path = "src/bin/hartbeat.rs"

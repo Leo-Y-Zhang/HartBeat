@@ -1,0 +1,9 @@
+target/
+guests/target/
+
+# Agent and editor scaffolding never belongs in history.
+CLAUDE.md
+AGENTS.md
+.claude/
+.vscode/
+.idea/
