@@ -80,11 +80,17 @@ repository does not have.
 
 ```
 cargo test --release              # 38 tests
-cargo run --release -p hartbeat -- fixtures/sort.elf --dump-regs
 ```
 
 The generated programs and the mutation campaign are reproducible from their
 seeds and re-run in CI on hardware that is not mine.
+
+The CLI is `hartbeat <program.elf> [--steps N] [--dump-regs]`, and it runs an
+image that carries every page it touches. The committed guests are not that:
+their input, output and stack pages come from the test harness rather than from
+the image, so `hartbeat fixtures/sort.elf` faults five instructions in, on the
+first push to a stack the linker script names and never reserves. They are run
+by `cargo test`.
 
 ## What it does not do
 
