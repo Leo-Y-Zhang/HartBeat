@@ -79,7 +79,7 @@ repository does not have.
 ## Running it
 
 ```
-cargo test --release              # 37 tests
+cargo test --release              # 38 tests
 cargo run --release -p hartbeat -- fixtures/sort.elf --dump-regs
 ```
 
@@ -112,11 +112,12 @@ seeds and re-run in CI on hardware that is not mine.
 | `crates/hartbeat/tests/spec_vectors.rs` | The hand-written specification cases |
 | `crates/hartbeat/tests/lockstep.rs` | Generated programs, compared instruction by instruction |
 | `crates/hartbeat/tests/programs.rs` | The compiled guests, checked against the host |
+| `crates/hartbeat/tests/elf_loader.rs` | What the loader refuses |
 | `guests/` | The freestanding Rust programs and their shared algorithms |
 | `fixtures/` | The compiled guest images, with provenance |
 | `tools/mutations.py` | Breaks the emulator twelve ways and records what noticed |
 
-1,309 lines of implementation, 1,076 lines of tests.
+1,327 lines of implementation, 1,131 lines of tests.
 
 ## Licence
 

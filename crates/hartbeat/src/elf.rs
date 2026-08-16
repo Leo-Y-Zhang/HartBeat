@@ -14,6 +14,7 @@ pub enum ElfError {
     NotLittleEndian,
     NotRiscV,
     Truncated,
+    NothingToLoad,
 }
 
 impl std::fmt::Display for ElfError {
@@ -24,6 +25,7 @@ impl std::fmt::Display for ElfError {
             ElfError::NotLittleEndian => "not little-endian",
             ElfError::NotRiscV => "not a RISC-V ELF",
             ElfError::Truncated => "truncated",
+            ElfError::NothingToLoad => "no loadable segments",
         };
         f.write_str(text)
     }
@@ -50,6 +52,13 @@ fn u32_at(bytes: &[u8], offset: usize) -> Result<u32, ElfError> {
 ///
 /// A segment whose `memsz` exceeds its `filesz` has the remainder zeroed, which
 /// is how `.bss` arrives.
+///
+/// A file that parses but places no bytes anywhere is refused rather than
+/// returned as a program. An object file is a well-formed ELF32 RISC-V file with
+/// no program headers at all, so the loop below simply never runs and every
+/// check passes; the caller would then start a hart at an entry point nothing
+/// was loaded at, and the access fault that follows reads as the program's fault
+/// rather than as the loader having been handed something that is not a program.
 pub fn load(bytes: &[u8], mem: &mut Memory) -> Result<u32, ElfError> {
     if bytes.len() < 52 || &bytes[0..4] != b"\x7fELF" {
         return Err(ElfError::NotElf);
@@ -69,6 +78,7 @@ pub fn load(bytes: &[u8], mem: &mut Memory) -> Result<u32, ElfError> {
     let phentsize = u16_at(bytes, 42)? as usize;
     let phnum = u16_at(bytes, 44)? as usize;
 
+    let mut loaded = 0usize;
     for i in 0..phnum {
         let base = phoff + i * phentsize;
         if u32_at(bytes, base)? != PT_LOAD {
@@ -90,6 +100,14 @@ pub fn load(bytes: &[u8], mem: &mut Memory) -> Result<u32, ElfError> {
             let zeros = vec![0u8; memsz - filesz];
             mem.write_slice(vaddr.wrapping_add(filesz as u32), &zeros);
         }
+
+        if filesz > 0 || memsz > 0 {
+            loaded += 1;
+        }
+    }
+
+    if loaded == 0 {
+        return Err(ElfError::NothingToLoad);
     }
 
     Ok(entry)
