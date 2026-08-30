@@ -1,21 +1,171 @@
-MIT License
+PROPRIETARY SOURCE-AVAILABLE LICENCE
+Read it, run it, check it — no reuse rights granted
 
-Copyright (c) 2026 Leo Y. Zhang
+Copyright (c) 2026 Leo Y. Zhang. All rights reserved.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+================================================================================
+1. AUTHORSHIP AND OWNERSHIP
+================================================================================
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+Leo Y. Zhang (the "Author") is the sole author of this software and its
+accompanying documentation (the "Work"), and the sole owner of all copyright and
+other intellectual property rights in it.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+Where the Work has been or is published under a project name, handle, or
+pseudonym, that does not transfer, waive, dedicate to the public, or otherwise
+diminish any right of the Author. The Author expressly reserves the right, at any
+time, to:
+
+  (a) assert authorship of the Work, including retrospectively;
+  (b) require that any third-party reference to the Work attribute it to the
+      Author;
+  (c) re-license the Work, in whole or in part, under any other terms; and
+  (d) transfer or assign ownership of the Work.
+
+Nothing in this licence, and no lapse of time, shall be construed as abandonment
+of copyright or of the Author's moral right to be identified as the author of the
+Work.
+
+This notice records authorship only. It is not an invitation to contact the
+Author by any channel other than the one in section 10.5, and it identifies no
+account, address, employer, institution, or service.
+
+================================================================================
+2. LIMITED PERMISSION GRANTED
+================================================================================
+
+Subject to the restrictions in section 3, any person obtaining access to the Work
+is granted a non-exclusive, non-transferable, revocable permission to do the
+following, and nothing beyond it:
+
+  * to READ and VIEW the source code and documentation, for the purpose of
+    evaluating the Author's technical ability — for example as a recruiter,
+    hiring manager, academic admissions reviewer, collaborator, or interviewer;
+    and
+
+  * to RUN the Work locally for that purpose — including its test suite and any
+    verification, audit or self-check tooling it ships — and to satisfy yourself
+    that it does what it claims.
+
+    This second right is deliberate rather than incidental. Several of these
+    projects are TOOLS whose documentation invites you to run them, and a licence
+    granting only "reading" would have contradicted the README while appearing to
+    support it. Anyone auditing a claim made by this Work may execute whatever it
+    provides for checking that claim, and may publish what they find — explicitly
+    including a refutation. A verification right that excluded publishing a
+    negative finding would be worthless.
+
+Running the Work locally to evaluate or check it is therefore permitted. Running
+it to provide a service to somebody else is not: see 3.5.
+
+That is the entire grant. No other right is given, by implication, estoppel, or
+otherwise.
+
+================================================================================
+3. RESTRICTIONS — WHAT IS NOT PERMITTED
+================================================================================
+
+Except where a right cannot lawfully be excluded (see section 5), you may NOT,
+without the Author's prior written permission:
+
+  3.1  copy, reproduce, download in bulk, mirror, or archive the Work, other
+       than transient copies strictly incidental to viewing it;
+  3.2  modify, adapt, translate, refactor, or create derivative works;
+  3.3  distribute, publish, sublicense, rent, lend, sell, or otherwise transfer
+       the Work or any part of it;
+  3.4  use the Work, in whole or in part, in any product, service, prototype,
+       internal tool, coursework, publication, or commercial offering;
+  3.5  deploy, host, or execute the Work to provide a service to any third party;
+  3.6  use the Work, or any portion of it, as training data, fine-tuning data,
+       evaluation data, or retrieval corpus for any machine-learning or
+       artificial-intelligence system, model, or dataset;
+  3.7  remove, obscure, or alter any copyright notice, licence text, or
+       attribution contained in the Work.
+
+================================================================================
+4. PLATFORM FORKS
+================================================================================
+
+The Work may be hosted on a platform whose terms of service require that
+publicly readable repositories permit forking. Where such a fork is technically
+possible, it is tolerated ONLY to the minimum extent those terms compel, and:
+
+  * it grants the forking party no right whatsoever under sections 2 or 3;
+  * the restrictions in section 3 continue to apply in full to the fork and to
+    its contents; and
+  * the forking party shall delete the fork promptly upon written request by the
+    Author.
+
+Forking is not permission. Availability is not a licence.
+
+================================================================================
+5. STATUTORY EXCEPTIONS
+================================================================================
+
+Nothing in this licence purports to exclude or restrict any act that applicable
+law permits and does not allow to be excluded by contract — for example, certain
+acts of fair dealing, quotation, criticism, review, study, or the limited
+decompilation rights granted by statute. Section 3 is to be read as limited
+accordingly, and remains fully effective in all other respects.
+
+================================================================================
+6. NO TRADEMARK OR ENDORSEMENT
+================================================================================
+
+This licence grants no right to use the name of the Work, the Author's name, or
+any related name, logo, or mark, whether for attribution of your own work,
+endorsement, or any other purpose, beyond factual reference to the Work and its
+authorship.
+
+================================================================================
+7. NO WARRANTY
+================================================================================
+
+THE WORK IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+PARTICULAR PURPOSE, ACCURACY, AND NON-INFRINGEMENT.
+
+The Work is published for evaluation of engineering ability. It is not offered as
+a fit-for-purpose product, and no part of it should be relied upon for any
+safety-critical, financial, medical, legal, or otherwise consequential decision.
+
+================================================================================
+8. NO LIABILITY
+================================================================================
+
+TO THE MAXIMUM EXTENT PERMITTED BY LAW, THE AUTHOR SHALL NOT BE LIABLE FOR ANY
+CLAIM, DAMAGES, OR OTHER LIABILITY, WHETHER IN CONTRACT, TORT, OR OTHERWISE,
+ARISING FROM, OUT OF, OR IN CONNECTION WITH THE WORK OR ITS USE. Nothing here
+limits liability that cannot lawfully be limited, including liability for death
+or personal injury caused by negligence, or for fraud.
+
+================================================================================
+9. TERMINATION
+================================================================================
+
+The permission in section 2 terminates automatically and immediately upon any
+breach of section 3, without notice. On termination you must cease all use of the
+Work and destroy any copies in your possession or control.
+
+================================================================================
+10. GENERAL
+================================================================================
+
+10.1 Governing law. This licence is governed by the laws of England and Wales,
+     without prejudice to any mandatory consumer protections available to you
+     under the law of your place of residence.
+
+10.2 Severability. If any provision is held unenforceable, it shall be modified
+     to the minimum extent necessary to make it enforceable, and the remaining
+     provisions shall continue in full force.
+
+10.3 No waiver. A failure to enforce any provision is not a waiver of it.
+
+10.4 Entire terms. This file is the complete licence for the Work and supersedes
+     any other statement of terms, including any licence badge, template, or
+     platform-inferred licence label.
+
+10.5 Permissions. Requests for any right beyond section 2 — including reuse,
+     collaboration, or commercial licensing — should be made through the hosting
+     platform account under which the Work is published. No other contact
+     channel is offered or implied.
