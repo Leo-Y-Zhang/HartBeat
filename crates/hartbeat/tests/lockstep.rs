@@ -225,14 +225,12 @@ fn lockstep(pair: &mut Pair, budget: usize) -> Result<usize, String> {
 
         match (a, b) {
             (Err(pa), Err(rb)) => {
-                return if same_trap(pa, rb) {
-                    Ok(step)
-                } else {
-                    Err(format!(
+                if !same_trap(pa, rb) {
+                    return Err(format!(
                         "step {step}: pc {pc:#010x} word {word:#010x}: \
                          primary trapped {pa:?} but reference trapped {rb:?}"
-                    ))
-                };
+                    ));
+                }
             }
             (Err(pa), Ok(())) => {
                 return Err(format!(
@@ -267,6 +265,9 @@ fn lockstep(pair: &mut Pair, budget: usize) -> Result<usize, String> {
                 ));
             }
         }
+        if a.is_err() {
+            return Ok(step);
+        }
     }
     Ok(budget)
 }
@@ -283,6 +284,17 @@ fn compare_memory(pair: &Pair) -> Result<(), String> {
         }
     }
     Ok(())
+}
+
+#[test]
+fn trapping_steps_still_compare_registers_and_pc() {
+    let mut pair = build(&[0], [0; 32], &[0; PAGE]);
+    pair.reference.set(1, 1);
+    assert!(lockstep(&mut pair, 1).unwrap_err().contains("x1 diverged"));
+
+    let mut pair = build(&[0], [0; 32], &[0; PAGE]);
+    pair.reference.pc += 4;
+    assert!(lockstep(&mut pair, 1).unwrap_err().contains("pc diverged"));
 }
 
 fn run_campaign(seed_base: u64, programs: usize, budget: usize) -> (usize, usize) {

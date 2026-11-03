@@ -11,6 +11,7 @@ mod common;
 
 use common::*;
 use hartbeat::{Hart, Trap};
+use hartbeat_ref::{RefHart, RefTrap};
 
 fn reg_after(program: &[u32], setup: &[(u8, u32)], reg: u8) -> u32 {
     step_one(program, setup).reg(reg)
@@ -99,10 +100,40 @@ fn jal_links_the_next_instruction_and_jumps_by_a_signed_offset() {
 
 #[test]
 fn jalr_clears_the_low_bit_of_the_target() {
-    // jalr x1, x2, 3 with x2 = ENTRY + 8 -> target (ENTRY + 11) & !1
-    let hart = step_one(&[i_type(3, 2, 0b000, 1, OP_JALR)], &[(2, ENTRY + 8)]);
+    // jalr x1, x2, 1 with x2 = ENTRY + 8 -> target (ENTRY + 9) & !1
+    let hart = step_one(&[i_type(1, 2, 0b000, 1, OP_JALR)], &[(2, ENTRY + 8)]);
     assert_eq!(hart.reg(1), ENTRY + 4);
-    assert_eq!(hart.pc, (ENTRY + 11) & !1, "bit 0 of the target is cleared");
+    assert_eq!(hart.pc, (ENTRY + 9) & !1, "bit 0 of the target is cleared");
+}
+
+#[test]
+fn misaligned_control_transfers_trap_before_changing_state() {
+    for (word, target) in [
+        (j_type(2, 1, OP_JAL), ENTRY + 2),
+        (i_type(3, 2, 0b000, 1, OP_JALR), ENTRY + 10),
+        (i_type(3, 2, 0b000, 2, OP_JALR), ENTRY + 10), // rd == rs1
+        (b_type(2, 0, 0, 0b000, OP_BRANCH), ENTRY + 2),
+    ] {
+        let mut hart = hart_with(&[word], &[(1, 0xdead_beef), (2, ENTRY + 8)]);
+        let regs = hart.regs();
+        assert_eq!(
+            hart.step(),
+            Err(Trap::MisalignedAccess {
+                pc: ENTRY,
+                addr: target,
+                width: 4,
+            })
+        );
+        assert_eq!(hart.pc, ENTRY);
+        assert_eq!(hart.regs(), regs);
+
+        let mut reference = RefHart::new(ENTRY);
+        reference.write_bytes(ENTRY, &word.to_le_bytes());
+        reference.x = regs;
+        assert_eq!(reference.step(), Err(RefTrap::Misaligned));
+        assert_eq!(reference.pc, ENTRY);
+        assert_eq!(reference.regs(), regs);
+    }
 }
 
 #[test]
@@ -124,6 +155,14 @@ fn branches_take_signed_comparisons() {
     let bltu = b_type(8, 3, 2, 0b110, OP_BRANCH);
     let not_taken = step_one(&[bltu], &[(2, 0xffff_ffff), (3, 1)]);
     assert_eq!(not_taken.pc, ENTRY + 4);
+
+    // A misaligned target must not trap when the branch is not taken.
+    let bne = b_type(2, 0, 0, 0b001, OP_BRANCH);
+    assert_eq!(step_one(&[bne], &[]).pc, ENTRY + 4);
+    let mut reference = RefHart::new(ENTRY);
+    reference.write_bytes(ENTRY, &bne.to_le_bytes());
+    assert_eq!(reference.step(), Ok(()));
+    assert_eq!(reference.pc, ENTRY + 4);
 }
 
 #[test]
@@ -295,6 +334,24 @@ fn ecall_and_ebreak_stop_the_hart() {
     assert!(matches!(hart.step(), Err(Trap::EnvironmentCall { .. })));
     let mut hart = hart_with(&[ebreak], &[]);
     assert!(matches!(hart.step(), Err(Trap::Breakpoint { .. })));
+}
+
+#[test]
+fn malformed_system_words_are_illegal() {
+    // ECALL with nonzero rd; EBREAK with nonzero rs1.
+    for word in [0x0000_00f3u32, 0x0010_8073] {
+        let mut hart = hart_with(&[word], &[]);
+        assert_eq!(
+            hart.step(),
+            Err(Trap::IllegalInstruction { pc: ENTRY, word })
+        );
+        assert_eq!(hart.pc, ENTRY);
+
+        let mut reference = RefHart::new(ENTRY);
+        reference.write_bytes(ENTRY, &word.to_le_bytes());
+        assert_eq!(reference.step(), Err(RefTrap::Illegal));
+        assert_eq!(reference.pc, ENTRY);
+    }
 }
 
 #[test]

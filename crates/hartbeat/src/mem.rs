@@ -51,11 +51,6 @@ impl Memory {
         }
     }
 
-    /// Whether the page containing `addr` has been allocated.
-    pub fn is_mapped(&self, addr: u32) -> bool {
-        self.pages.contains_key(&Self::page_of(addr))
-    }
-
     fn read_byte(&self, addr: u32, pc: u32) -> Result<u8, Trap> {
         self.pages
             .get(&Self::page_of(addr))
