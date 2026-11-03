@@ -107,19 +107,42 @@ pub fn execute(hart: &mut Hart, instr: Instr) -> Result<(), Trap> {
             hart.pc = next;
         }
         Instr::Jal { rd, imm } => {
+            let target = pc.wrapping_add(imm as u32);
+            if target % 4 != 0 {
+                return Err(Trap::MisalignedAccess {
+                    pc,
+                    addr: target,
+                    width: 4,
+                });
+            }
             hart.set_reg(rd, next);
-            hart.pc = pc.wrapping_add(imm as u32);
+            hart.pc = target;
         }
         Instr::Jalr { rd, rs1, imm } => {
             // The target is computed before rd is written, because they can be
             // the same register.
             let target = hart.reg(rs1).wrapping_add(imm as u32) & !1;
+            if target % 4 != 0 {
+                return Err(Trap::MisalignedAccess {
+                    pc,
+                    addr: target,
+                    width: 4,
+                });
+            }
             hart.set_reg(rd, next);
             hart.pc = target;
         }
         Instr::Branch { op, rs1, rs2, imm } => {
             hart.pc = if branch_taken(op, hart.reg(rs1), hart.reg(rs2)) {
-                pc.wrapping_add(imm as u32)
+                let target = pc.wrapping_add(imm as u32);
+                if target % 4 != 0 {
+                    return Err(Trap::MisalignedAccess {
+                        pc,
+                        addr: target,
+                        width: 4,
+                    });
+                }
+                target
             } else {
                 next
             };

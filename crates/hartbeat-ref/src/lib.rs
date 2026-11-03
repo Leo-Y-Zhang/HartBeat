@@ -161,14 +161,21 @@ impl RefHart {
                 self.pc = step4;
             }
             0b1101111 => {
+                let target = (pc as i32).wrapping_add(imm_j) as u32;
+                if target & 3 != 0 {
+                    return Err(RefTrap::Misaligned);
+                }
                 self.set(rd, step4);
-                self.pc = (pc as i32).wrapping_add(imm_j) as u32;
+                self.pc = target;
             }
             0b1100111 => {
                 if f3 != 0 {
                     return Err(RefTrap::Illegal);
                 }
                 let target = ((va as i32).wrapping_add(imm_i) as u32) & 0xffff_fffe;
+                if target & 3 != 0 {
+                    return Err(RefTrap::Misaligned);
+                }
                 self.set(rd, step4);
                 self.pc = target;
             }
@@ -183,7 +190,11 @@ impl RefHart {
                     _ => return Err(RefTrap::Illegal),
                 };
                 self.pc = if take {
-                    (pc as i32).wrapping_add(imm_b) as u32
+                    let target = (pc as i32).wrapping_add(imm_b) as u32;
+                    if target & 3 != 0 {
+                        return Err(RefTrap::Misaligned);
+                    }
+                    target
                 } else {
                     step4
                 };
@@ -282,9 +293,9 @@ impl RefHart {
             0b0001111 if f3 == 0 => {
                 self.pc = step4;
             }
-            0b1110011 if f3 == 0 => match w >> 20 {
-                0 => return Err(RefTrap::Ecall),
-                1 => return Err(RefTrap::Ebreak),
+            0b1110011 => match w {
+                0x0000_0073 => return Err(RefTrap::Ecall),
+                0x0010_0073 => return Err(RefTrap::Ebreak),
                 _ => return Err(RefTrap::Illegal),
             },
             _ => return Err(RefTrap::Illegal),
