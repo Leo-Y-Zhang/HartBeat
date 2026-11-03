@@ -341,7 +341,10 @@ fn malformed_system_words_are_illegal() {
     // ECALL with nonzero rd; EBREAK with nonzero rs1.
     for word in [0x0000_00f3u32, 0x0010_8073] {
         let mut hart = hart_with(&[word], &[]);
-        assert_eq!(hart.step(), Err(Trap::IllegalInstruction { pc: ENTRY, word }));
+        assert_eq!(
+            hart.step(),
+            Err(Trap::IllegalInstruction { pc: ENTRY, word })
+        );
         assert_eq!(hart.pc, ENTRY);
 
         let mut reference = RefHart::new(ENTRY);
