@@ -283,8 +283,7 @@ pub fn decode(word: u32) -> Option<Instr> {
                     0b100 => AluOp::Xor,
                     0b101 => AluOp::Srl,
                     0b110 => AluOp::Or,
-                    0b111 => AluOp::And,
-                    _ => return None,
+                    _ => AluOp::And, // funct3 is masked to three bits.
                 };
                 Some(Instr::Op {
                     op,
@@ -315,8 +314,7 @@ pub fn decode(word: u32) -> Option<Instr> {
                     0b100 => MulOp::Div,
                     0b101 => MulOp::Divu,
                     0b110 => MulOp::Rem,
-                    0b111 => MulOp::Remu,
-                    _ => return None,
+                    _ => MulOp::Remu, // funct3 is masked to three bits.
                 };
                 Some(Instr::Mul {
                     op,
@@ -328,9 +326,9 @@ pub fn decode(word: u32) -> Option<Instr> {
             _ => None,
         },
         0b0001111 if funct3(word) == 0b000 => Some(Instr::Fence),
-        0b1110011 if funct3(word) == 0b000 => match word >> 20 {
-            0 => Some(Instr::Ecall),
-            1 => Some(Instr::Ebreak),
+        0b1110011 => match word {
+            0x0000_0073 => Some(Instr::Ecall),
+            0x0010_0073 => Some(Instr::Ebreak),
             _ => None,
         },
         _ => None,

@@ -11,7 +11,7 @@
 
 #![allow(dead_code)]
 
-use hartbeat::{Hart, Stop};
+use hartbeat::Hart;
 
 pub const ENTRY: u32 = 0x8000_0000;
 pub const DATA: u32 = 0x8001_0000;
@@ -99,11 +99,4 @@ pub fn step_one(program: &[u32], setup: &[(u8, u32)]) -> Hart {
     let mut hart = hart_with(program, setup);
     hart.step().expect("instruction should not trap");
     hart
-}
-
-/// Run until it stops, with a budget.
-pub fn run(program: &[u32], setup: &[(u8, u32)], budget: u64) -> (Hart, Stop) {
-    let mut hart = hart_with(program, setup);
-    let stop = hart.run(budget);
-    (hart, stop)
 }

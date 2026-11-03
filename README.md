@@ -13,7 +13,7 @@ outside the standard library.
 
 ## How it is checked
 
-**1. Hand-written cases from the specification.** 28 of them, chosen because they
+**1. Hand-written cases from the specification.** 30 of them, chosen because they
 are where a plausible implementation differs from the specified one: arithmetic
 versus logical shift, signed versus unsigned comparison, shift amounts masked to
 five bits, `jalr` clearing the low bit of its target, division by zero returning
@@ -26,30 +26,32 @@ implementation written to be *unlike* the first: no decode step at all, fields
 pulled out of the word at the point of use, immediates derived by arithmetic
 shift rather than mask-and-extend, and its own byte-map memory instead of a page
 table. The two run generated programs one instruction at a time and the whole
-architectural state — 32 registers and the pc — is compared after every step,
-with the data page compared afterwards as well. A divergence is reported at the
-instruction that caused it:
+architectural state — 32 registers, the pc and trap cause — is compared after
+every step, including trapping steps, with the data page compared afterwards as
+well. A divergence is reported at the instruction that caused it:
 
 ```
 step 2: pc 0x80000008 word 0x41535133: x2 diverged, primary 0xffffffff reference 0x001fffff
 ```
 
-**252,428 instructions across 400 generated programs**, a second campaign on a
-different seed, and **200,000 random words** on which both must agree about what
-is not an instruction.
+**400 generated programs**, a second campaign on a different seed, and **200,000
+random words** on which both must agree about what is not an instruction.
 
 **3. Real programs compiled by LLVM.** Five freestanding Rust programs are
 compiled for `riscv32im-unknown-none-elf`, loaded from ELF, and run. The expected
-answers come from compiling *the same source file* for the host and running it on
-real hardware. `guests/src/algorithms.rs` is `include!`d into both the guest
-images and the test.
+answers for `arith`, `sort` and `control` come from compiling *the same source
+file* for the host and running it on real hardware. `guests/src/algorithms.rs` is
+`include!`d into those three guest images and the test. `memops` uses hand-derived
+expectations for access widths and sign extension; `muldiv` uses host arithmetic
+with explicit specification cases for division by zero and signed overflow.
 
 This third gate exists because the first two share an author. The decoder, the
 reference interpreter and the test encoder were all written by the same person
 from the same document, so a misreading of the specification appears in all three
 and they agree with each other perfectly. Here nobody involved has an opinion
-about RISC-V: LLVM chose the instructions and encoded them, and the host answer
-comes from a different machine entirely.
+about RISC-V instruction encoding: LLVM chose the instructions and encoded them;
+for the three shared-source guests, the host answer comes from a different
+machine entirely.
 
 ## Does any of it work?
 
@@ -65,8 +67,8 @@ for keeping all three gates, because each one catches something no other does:
 
 The third row is the one worth staring at. Making the decoder, the second
 interpreter and the test encoder misread a store's offset in the same way — a
-misreading, not a typo — passes 28 specification cases and a quarter of a million
-lockstep instructions without a murmur. The compiled programs catch it
+misreading, not a typo — passed the original 28 specification cases and a quarter
+of a million lockstep instructions without a murmur. The compiled programs catch it
 immediately, because LLVM did not make the same mistake.
 
 The survivor is recorded too: widening `srai`'s shift amount to six bits, an RV64
@@ -79,7 +81,7 @@ repository does not have.
 ## Running it
 
 ```
-cargo test --release              # 38 tests
+cargo test --release              # 41 tests
 ```
 
 The generated programs and the mutation campaign are reproducible from their
@@ -117,13 +119,13 @@ by `cargo test`.
 | `crates/hartbeat-ref/` | The second interpreter, written differently on purpose |
 | `crates/hartbeat/tests/spec_vectors.rs` | The hand-written specification cases |
 | `crates/hartbeat/tests/lockstep.rs` | Generated programs, compared instruction by instruction |
-| `crates/hartbeat/tests/programs.rs` | The compiled guests, checked against the host |
+| `crates/hartbeat/tests/programs.rs` | The compiled guests, checked against the host or specification |
 | `crates/hartbeat/tests/elf_loader.rs` | What the loader refuses |
 | `guests/` | The freestanding Rust programs and their shared algorithms |
 | `fixtures/` | The compiled guest images, with provenance |
 | `tools/mutations.py` | Breaks the emulator twelve ways and records what noticed |
 
-1,327 lines of implementation, 1,131 lines of tests.
+1,354 lines of implementation, 1,190 lines of tests.
 
 ## Licence
 
